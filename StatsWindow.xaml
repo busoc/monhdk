@@ -1,0 +1,31 @@
+﻿<Window x:Class="monhdk4.StatsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:monhdk4"
+        mc:Ignorable="d"
+        Title="Statistics" Height="360" Width="540" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <local:ChannelConverter x:Key="channelConverter"/>
+        <local:InstanceConverter x:Key="instanceConverter"/>
+    </Window.Resources>
+    <TabControl>
+        <TabItem>
+            <TabItem.Header>By Sources</TabItem.Header>
+            <local:CozeGrid Items="{Binding Sources}"/>
+        </TabItem>
+        <TabItem>
+            <TabItem.Header>By Instances</TabItem.Header>
+            <local:CozeGrid Items="{Binding Instances}" Convert="{StaticResource channelConverter}"/>
+        </TabItem>
+        <TabItem>
+            <TabItem.Header>By Channels</TabItem.Header>
+            <local:CozeGrid Items="{Binding Channels}" Convert="{StaticResource instanceConverter}"/>
+        </TabItem>
+        <TabItem>
+            <TabItem.Header>By UPIs</TabItem.Header>
+            <local:CozeGrid Items="{Binding Upis}"/>
+        </TabItem>
+    </TabControl>
+</Window>

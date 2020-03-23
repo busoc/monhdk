@@ -1,0 +1,161 @@
+﻿<Window x:Class="monhdk4.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:monhdk4"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        mc:Ignorable="d"
+        Title="Hadock Monitoring" Height="720" Width="960"
+        Loaded="OnLoad" KeyDown="OnKeyDown">
+
+    <Window.Resources>
+        <CollectionViewSource Source="{Binding Path=Entries}" x:Key="entries" x:Name="entrylist"/>
+        <local:BoolToVisibility x:Key="boolToVisibility"/>
+        <local:SizeConverter x:Key="sizeConverter"/>
+    </Window.Resources>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" x:Name="winMenu">
+            <MenuItem Header="Monitor">
+                <MenuItem Header="Connect..." Click="OnConnect"/>
+                <MenuItem Header="Disconnect" Click="OnDisconnect" IsEnabled="{Binding Path=IsConnected}"/>
+                <Separator/>
+                <MenuItem Header="Quit" Click="OnExit"/>
+            </MenuItem>
+            <MenuItem Header="View" IsEnabled="{Binding Path=IsConnected}">
+                <MenuItem Header="Statistics..." Click="OnShowStats"/>
+                <MenuItem Header="Filter..." Click="OnShowFilter"/>
+                <MenuItem Header="Columns">
+                    <MenuItem IsCheckable="True" Header="EC" IsChecked="False" x:Name="itemEC"/>
+                    <MenuItem IsCheckable="True" Header="Origin" IsChecked="True" x:Name="itemOrigin"/>
+                    <MenuItem IsCheckable="True" Header="Sequence" IsChecked="True" x:Name="itemSequence"/>
+                    <MenuItem IsCheckable="True" Header="Instance" IsChecked="True" x:Name="itemInstance"/>
+                    <MenuItem IsCheckable="True" Header="Channel" IsChecked="True" x:Name="itemChannel"/>
+                    <MenuItem IsCheckable="True" Header="Mode" IsChecked="True" x:Name="itemMode"/>
+                    <MenuItem IsCheckable="True" Header="Count" IsChecked="True" x:Name="itemCount"/>
+                    <MenuItem IsCheckable="True" Header="Reception" IsChecked="False" x:Name="itemGenTime"/>
+                    <MenuItem IsCheckable="True" Header="Acquisition" IsChecked="True" x:Name="itemAcqTime"/>
+                    <MenuItem IsCheckable="True" Header="UPI" IsChecked="True" x:Name="itemUPI"/>
+                    <MenuItem IsCheckable="True" Header="URL" IsChecked="False" x:Name="itemReference"/>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+        <StatusBar DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
+            <StatusBar.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Margin" Value="5, 0, 0, 0"/>
+                </Style>
+            </StatusBar.Resources>
+            <StatusBarItem>
+                <StatusBarItem.Resources>
+                    <local:AddrPortConverter x:Key="addrPortConverter"/>
+                </StatusBarItem.Resources>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="left">
+                    <TextBlock Visibility="{Binding Path=IsConnected, Converter={StaticResource boolToVisibility}}">
+                        <TextBlock.Text>
+                            <MultiBinding Converter="{StaticResource addrPortConverter}">
+                                <Binding Path="Addr"/>
+                                <Binding Path="Port"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </StackPanel>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <Binding Path="Count" StringFormat="Packets: {0}"/>
+                        </TextBlock.Text>
+                    </TextBlock>                    
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <Binding Path="Bad" StringFormat="Invalid Packets: {0}"/>
+                        </TextBlock.Text>
+                    </TextBlock>                    
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <Binding Path="Size" StringFormat="Total Size: {0}" Converter="{StaticResource sizeConverter}"/>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </StackPanel>
+            </StatusBarItem>
+        </StatusBar>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <DataGrid x:Name="datagrid"
+                  AutoGenerateColumns="False"
+                  VerticalScrollBarVisibility="Auto"
+                  AlternationCount="2"
+                  SelectionMode="Single"
+                  IsReadOnly="True"
+                  ColumnWidth="*"
+                  VerticalGridLinesBrush="{StaticResource MyGray}"
+                  HorizontalGridLinesBrush="{StaticResource MyGray}"
+                  ItemsSource="{Binding Source={StaticResource entries}}">
+                <DataGrid.Resources>
+                    <local:InstanceConverter x:Key="instanceConverter"/>
+                    <local:ChannelConverter x:Key="channelConverter"/>
+                    <local:ModeConverter x:Key="modeConverter"/>
+                    <local:ECConverter x:Key="ecConverter"/>
+                    <local:DatetimeConverter x:Key="dtConverter"/>
+
+                    <Style x:Key="colsStyle" TargetType="TextBlock">
+                        <Setter Property="Padding" Value="5, 3"/>
+                    </Style>
+                </DataGrid.Resources>
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="EC"
+                                    ElementStyle="{StaticResource colsStyle}"
+                                    Visibility="{Binding Source={x:Reference itemEC},Path=IsChecked, Converter={StaticResource boolToVisibility}}"
+                                    Binding="{Binding Path=Origin, Converter={StaticResource ecConverter}}"/>
+                    <DataGridTextColumn Header="Origin"
+                                    ElementStyle="{StaticResource colsStyle}"
+                                        Visibility="{Binding Source={x:Reference itemOrigin},Path=IsChecked, Converter={StaticResource boolToVisibility}}"
+                                    Binding="{Binding Origin}"/>
+                    <DataGridTextColumn Header="Sequence"
+                                    ElementStyle="{StaticResource colsStyle}"
+                                    Visibility="{Binding Source={x:Reference itemSequence},Path=IsChecked, Converter={StaticResource boolToVisibility}}"
+                                    Binding="{Binding Sequence}"/>
+                    <DataGridTextColumn Header="Instance"
+                                    ElementStyle="{StaticResource colsStyle}"
+                                    Visibility="{Binding Source={x:Reference itemInstance},Path=IsChecked, Converter={StaticResource boolToVisibility}}"
+                                    Binding="{Binding Path=Instance, Converter={StaticResource instanceConverter}}" />
+                    <DataGridTextColumn Header="Channel"
+                                    ElementStyle="{StaticResource colsStyle}"
+                                    Visibility="{Binding Source={x:Reference itemChannel},Path=IsChecked, Converter={StaticResource boolToVisibility}}"
+                                    Binding="{Binding Path=Channel, Converter={StaticResource channelConverter}}"/>
+                    <DataGridTextColumn Header="Mode"
+                                    ElementStyle="{StaticResource colsStyle}"
+                                    Visibility="{Binding Source={x:Reference itemMode},Path=IsChecked, Converter={StaticResource boolToVisibility}}"
+                                    Binding="{Binding Realtime, Converter={StaticResource modeConverter}}"/>
+                    <DataGridTextColumn Header="Count"
+                                    ElementStyle="{StaticResource colsStyle}"
+                                    Visibility="{Binding Source={x:Reference itemCount},Path=IsChecked, Converter={StaticResource boolToVisibility}}"
+                                    Binding="{Binding Count}"/>
+                    <DataGridTextColumn Header="Reception"
+                                    ElementStyle="{StaticResource colsStyle}"
+                                    Visibility="{Binding Source={x:Reference itemGenTime},Path=IsChecked, Converter={StaticResource boolToVisibility}}"
+                                    Binding="{Binding Path=GenTime, Converter={StaticResource dtConverter}}" 
+                                    Width="3*"/>
+                    <DataGridTextColumn Header="Acquisition"
+                                    ElementStyle="{StaticResource colsStyle}"
+                                    Visibility="{Binding Source={x:Reference itemAcqTime},Path=IsChecked, Converter={StaticResource boolToVisibility}}"
+                                    Binding="{Binding Path=AcqTime, Converter={StaticResource dtConverter}}"
+                                    Width="3*"/>
+                    <DataGridTextColumn Header="UPI"
+                                    ElementStyle="{StaticResource colsStyle}"
+                                    Visibility="{Binding Source={x:Reference itemUPI},Path=IsChecked, Converter={StaticResource boolToVisibility}}"
+                                    Binding="{Binding UPI}"
+                                    Width="3*"/>
+                    <DataGridTextColumn Header="Reference"
+                                    ElementStyle="{StaticResource colsStyle}"
+                                    Visibility="{Binding Source={x:Reference itemReference},Path=IsChecked, Converter={StaticResource boolToVisibility}}"
+                                    Binding="{Binding Reference}"
+                                    Width="3*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

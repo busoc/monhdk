@@ -1,0 +1,115 @@
+﻿<Window x:Class="monhdk4.ConnectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:monhdk4"
+        mc:Ignorable="d"
+        Title="Connect..."
+        Width="480"
+        ResizeMode="NoResize"
+        SizeToContent="Height"
+        ShowInTaskbar="False" WindowStyle="SingleBorderWindow" WindowStartupLocation="CenterOwner"
+        >
+    <Window.Resources>
+        <local:AddressValidator x:Key="addrValidator"/>
+        <local:UriValidator x:Key="urlValidator"/>
+        <local:PortValidator x:Key="portValidator"/>
+        <local:AddressConverter x:Key="addrConverter"/>
+        <local:PositionIntegerValidator x:Key="positiveValidator"/>
+    </Window.Resources>
+
+    <StackPanel Orientation="Vertical" Margin="10">
+        <Grid Margin="0, 10">
+            <Grid.Resources>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource stdBlock}">
+                    <Setter Property="Padding" Value="5, 3"/>
+                </Style>
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Name" Grid.Row="0" Grid.Column="0"/>
+            <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" x:Name="name" GotFocus="Enter">
+                <TextBox.Text>
+                    <Binding Path="Name"/>
+                </TextBox.Text>
+            </TextBox>
+
+            <TextBlock Text="Address" Grid.Row="1" Grid.Column="0"/>
+            <TextBox Grid.Row="1" Grid.Column="1" x:Name="addr" GotFocus="Enter">
+                <TextBox.Text>
+                    <Binding Path="Addr" Converter="{StaticResource addrConverter}">
+                        <Binding.ValidationRules>
+                            <local:AddressValidator/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+            <TextBlock Text="Port" Grid.Row="1" Grid.Column="2"/>
+            <TextBox Grid.Row="1" Grid.Column="3" MinWidth="80" x:Name="port" GotFocus="Enter">
+                <TextBox.Text>
+                    <Binding Path="Port">
+                        <Binding.ValidationRules>
+                            <local:PortValidator/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+
+            <TextBlock Text="Limit" Grid.Row="2" Grid.Column="0"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" x:Name="limit" GotFocus="Enter">
+                <TextBox.Text>
+                    <Binding Path="Limit">
+                        <Binding.ValidationRules>
+                            <local:PositionIntegerValidator/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+            
+            <TextBlock Text="Url" Grid.Row="3" Grid.Column="0"/>
+            <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" x:Name="url" GotFocus="Enter">
+                <TextBox.Text>
+                    <Binding Path="Url">
+                        <Binding.ValidationRules>
+                            <local:UriValidator/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+        </Grid>
+        
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel.Resources>
+
+            </StackPanel.Resources>
+            <Button IsCancel="True" Content="Quit" Style="{StaticResource defaultButton}"/>
+            <Button Click="Accept" Content="Connect">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource defaultButton}">
+                        <Setter Property="IsEnabled" Value="True"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=(Validation.HasError), ElementName=addr}" Value="True">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=(Validation.HasError), ElementName=port}" Value="True">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
+    </StackPanel>
+</Window>

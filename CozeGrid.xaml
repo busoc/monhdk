@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="monhdk4.CozeGrid"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:monhdk4"
+             mc:Ignorable="d" 
+             d:DesignHeight="360" d:DesignWidth="800">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" x:Name="root">
+        <ScrollViewer.Resources>
+            <CollectionViewSource Source="{Binding Items}" x:Key="entries" x:Name="entrylist"/>
+            <local:SizeConverter x:Key="sizeConverter"/>
+        </ScrollViewer.Resources>
+        <DataGrid ItemsSource="{Binding Source={StaticResource entries}}"
+                  AutoGenerateColumns="False"
+                  AlternationCount="2"
+                  SelectionMode="Single"
+                  IsReadOnly="True"
+                  ColumnWidth="*"
+                  CanUserSortColumns="False"
+                  CanUserReorderColumns="False"
+                  VerticalGridLinesBrush="{StaticResource MyGray}"
+                  HorizontalGridLinesBrush="{StaticResource MyGray}">
+            
+            <DataGrid.Resources>
+                <Style x:Key="colsStyle" TargetType="TextBlock">
+                    <Setter Property="Padding" Value="5, 3"/>
+                </Style>
+            </DataGrid.Resources>
+            
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Criteria"
+                                    ElementStyle="{StaticResource colsStyle}"
+                                    Width="4*"
+                                    Binding="{Binding Path=Name}"/>
+                <DataGridTextColumn Header="Packets"
+                                    ElementStyle="{StaticResource colsStyle}"
+                                    Binding="{Binding Path=Count}"/>
+                <DataGridTextColumn Header="Invalid"
+                                    ElementStyle="{StaticResource colsStyle}"
+                                    Binding="{Binding Path=Bad}"/>
+                <DataGridTextColumn Header="Size"
+                                    ElementStyle="{StaticResource colsStyle}"
+                                    Binding="{Binding Path=Size, Converter={StaticResource sizeConverter}}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </ScrollViewer>
+</UserControl>
