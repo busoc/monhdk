@@ -88,6 +88,19 @@ namespace monhdk4
                 }
             }
         }
+
+        private void ToggleFullscreen(object sender, RoutedEventArgs e)
+        {
+            if (WindowStyle == WindowStyle.None)
+            {
+                WindowState = WindowState.Normal;
+                WindowStyle = WindowStyle.SingleBorderWindow;
+            } else
+            {
+                WindowStyle= WindowStyle.None;
+                WindowState = WindowState.Maximized;
+            }
+        }
     }
 
     public class BoolToVisibility : IValueConverter

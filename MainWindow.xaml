@@ -38,6 +38,7 @@
                     <MenuItem IsCheckable="True" Header="UPI" IsChecked="True" x:Name="itemUPI"/>
                     <MenuItem IsCheckable="True" Header="URL" IsChecked="False" x:Name="itemReference"/>
                 </MenuItem>
+                <MenuItem Header="Toggle Fullscreen" IsCheckable="True" IsChecked="False" Click="ToggleFullscreen"/>
             </MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
